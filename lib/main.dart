@@ -46,18 +46,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor:
             Theme.of(context).colorScheme.inversePrimary,
-
-        // 左上の戻るボタン
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: _goBack,
         ),
-
         title: Text(widget.title),
       ),
       body: Column(
         children: [
-          // 上部（3）
+          // 上部
           Expanded(
             flex: 3,
             child: Container(
@@ -71,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          // 中部（2）
+          // 中部
           Expanded(
             flex: 2,
             child: Row(
@@ -102,13 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          // 下部（1）
+          // 下部
           Expanded(
             flex: 1,
             child: Center(
               child: ElevatedButton(
                 onPressed: () {
-                  print('問題ボタンが押されました');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QuizPage(),
+                    ),
+                  );
                 },
                 child: const Text(
                   '問題',
@@ -118,6 +120,63 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ===== 小テスト画面 =====
+
+void select1() {
+  debugPrint("選択肢1");
+}
+
+void select2() {
+  debugPrint("選択肢2");
+}
+
+void select3() {
+  debugPrint("選択肢3");
+}
+
+class QuizPage extends StatelessWidget {
+  const QuizPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('小テスト'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 220,
+              color: Colors.deepOrange,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              '正しいものを1つ選んでください',
+              style: TextStyle(fontSize: 22),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: select1,
+              child: const Text('選択肢1'),
+            ),
+            ElevatedButton(
+              onPressed: select2,
+              child: const Text('選択肢2'),
+            ),
+            ElevatedButton(
+              onPressed: select3,
+              child: const Text('選択肢3'),
+            ),
+          ],
+        ),
       ),
     );
   }
