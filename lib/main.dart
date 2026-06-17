@@ -1,8 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+// =====================
+// 地図用データ
+// =====================
+
+enum PlaceType {
+  tourist,
+  shelter,
+}
+
+class Place {
+  final String name;
+  final LatLng location;
+  final PlaceType type;
+
+  const Place({
+    required this.name,
+    required this.location,
+    required this.type,
+  });
+}
+
+const List<Place> places = [
+  Place(
+    name: 'JR大阪駅',
+    location: LatLng(34.7025, 135.4959),
+    type: PlaceType.tourist,
+  ),
+  Place(
+    name: '大阪工業大学 梅田キャンパス',
+    location: LatLng(34.7050, 135.4983),
+    type: PlaceType.shelter,
+  ),
+];
+
+// =====================
+// メインアプリ
+// =====================
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,14 +50,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'プロット',
+      debugShowCheckedModeBanner: false,
+      title: '防災アプリ',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,
         ),
       ),
       home: const MyHomePage(
-        title: '二枚目イメージ図',
+        title: '防災マップ',
       ),
     );
   }
@@ -37,7 +78,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void _goBack() {
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -54,21 +97,71 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          // 上部
+          // =====================
+          // 地図
+          // =====================
           Expanded(
-            flex: 3,
+            flex: 5,
             child: Container(
-              color: Colors.blue.shade100,
-              child: const Center(
-                child: Text(
-                  '画像と詳細',
-                  style: TextStyle(fontSize: 24),
+              margin: const EdgeInsets.all(4),
+              child: FlutterMap(
+                options: const MapOptions(
+                  initialCenter: LatLng(34.7037, 135.4971),
+                  initialZoom: 16,
                 ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.app',
+                  ),
+                  MarkerLayer(
+                    markers: places.map((place) {
+                      final color =
+                          place.type == PlaceType.tourist
+                              ? Colors.red
+                              : Colors.blue;
+
+                      return Marker(
+                        point: place.location,
+                        width: 100,
+                        height: 80,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.location_pin,
+                              color: color,
+                              size: 40,
+                            ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              color: Colors.white,
+                              child: Text(
+                                place.name,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
             ),
           ),
 
-          // 中部
+          // =====================
+          // 災害情報 + 詳細
+          // =====================
           Expanded(
             flex: 2,
             child: Row(
@@ -78,19 +171,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.orange.shade100,
                     child: const Center(
                       child: Text(
-                        '災害情報',
-                        style: TextStyle(fontSize: 24),
+                        '災害情報\n（後で追加）',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    color: Colors.green.shade100,
+                    color: Colors.blue.shade100,
                     child: const Center(
                       child: Text(
-                        'マップ',
-                        style: TextStyle(fontSize: 24),
+                        '詳細',
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
@@ -99,7 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          // 下部
+          // =====================
+          // 問題ボタン
+          // =====================
           Expanded(
             flex: 1,
             child: Center(
@@ -108,13 +204,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const QuizPage(),
+                      builder: (context) =>
+                          const QuizPage(),
                     ),
                   );
                 },
                 child: const Text(
                   '問題',
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 30),
                 ),
               ),
             ),
@@ -125,18 +222,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// ===== 小テスト画面 =====
+// =====================
+// 問題画面
+// =====================
 
 void select1() {
-  debugPrint("選択肢1");
+  debugPrint('選択肢1');
 }
 
 void select2() {
-  debugPrint("選択肢2");
+  debugPrint('選択肢2');
 }
 
 void select3() {
-  debugPrint("選択肢3");
+  debugPrint('選択肢3');
 }
 
 class QuizPage extends StatelessWidget {
@@ -151,7 +250,6 @@ class QuizPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: 220,
@@ -165,15 +263,21 @@ class QuizPage extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: select1,
-              child: const Text('選択肢1'),
+              child: const Text('選択肢1',
+              style: TextStyle(fontSize: 35)),
             ),
+            const SizedBox(height: 25),
             ElevatedButton(
               onPressed: select2,
-              child: const Text('選択肢2'),
+              child: const Text('選択肢2',
+              style: TextStyle(fontSize: 35)),
             ),
+            const SizedBox(height: 25),
             ElevatedButton(
               onPressed: select3,
-              child: const Text('選択肢3'),
+              child: const Text('選択肢3',
+              style: TextStyle(fontSize: 35)
+              ),
             ),
           ],
         ),
