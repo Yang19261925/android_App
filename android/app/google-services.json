@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "304217299204",
+    "project_id": "sdjyang",
+    "storage_bucket": "sdjyang.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304217299204:android:9247c741da183d07061851",
+        "android_client_info": {
+          "package_name": "com.example.sdjapp_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8i_MfVniQEvI-4vh6qv7z6XWyMQ_k83U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
